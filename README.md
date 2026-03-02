@@ -27,26 +27,18 @@ such as Ninja.
 - Generator: Ninja
 - Triplet: `x64-windows`
 
-## Repository Contents
-
-```
-
-CMakeLists.txt
-vcpkg.json
-test.cpp
-
-```
-
-The project simply links against `fkYAML::fkYAML`.
-
 ## Steps to Reproduce
 
-## Configure using the vcpkg toolchain (manifest mode is automatic):
+1. Checkout rioki/fkyaml-natviz-test or build a CMake that lookf fkYAML.
 
 ```
-cmake -S . -B build -G Ninja ^
--DCMAKE_TOOLCHAIN_FILE=C:\path\to\vcpkg\scripts\buildsystems\vcpkg.cmake ^
--DVCPKG_TARGET_TRIPLET=x64-windows
+find_package(fkYAML CONFIG REQUIRED)
+```
+
+2. Configure using the vcpkg toolchain (manifest mode is automatic):
+
+```
+cmake -S . -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=C:\path\to\vcpkg\scripts\buildsystems\vcpkg.cmake
 ```
 
 3. Observe configuration failure during `find_package(fkYAML CONFIG REQUIRED)`.
@@ -64,20 +56,28 @@ cmake -S . -B build -G Ninja ^
 CMake fails with:
 
 ```
-
 Cannot find source file:
 .../vcpkg_installed/x64-windows/fkYAML.natvis
-
 ```
 
 The failure occurs during configure, before any build step.
+
+## Workaround
+
+Add this snipet of code after the `find_package(fkYAML CONFIG REQUIRED)`
+
+```
+get_target_property(_src fkYAML::fkYAML INTERFACE_SOURCES)
+if(_src)
+  list(FILTER _src EXCLUDE REGEX ".*\\.natvis$")
+  set_property(TARGET fkYAML::fkYAML PROPERTY INTERFACE_SOURCES "${_src}")
+endif()
+```
+
+This will strip the offening natvis file.
 
 ## Notes
 
 This repository exists solely to provide a minimal, self-contained
 reproduction case.
 ```
-
----
-
-That’s minimal, precise and maintainer-friendly.
