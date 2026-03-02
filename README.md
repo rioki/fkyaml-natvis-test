@@ -80,4 +80,4 @@ This will strip the offening natvis file.
 
 This repository exists solely to provide a minimal, self-contained
 reproduction case.
-```
+
