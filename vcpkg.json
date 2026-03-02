@@ -1,0 +1,7 @@
+{
+  "name": "fkyaml-natvis-test",
+  "version-string": "0.0.1",
+  "dependencies": [
+    "fkyaml"
+  ]
+}
